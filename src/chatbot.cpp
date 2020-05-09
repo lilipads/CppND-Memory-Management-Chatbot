@@ -40,11 +40,54 @@ ChatBot::~ChatBot() {
   }
 }
 
-//// STUDENT CODE
-////
+ChatBot::ChatBot(const ChatBot &source) {
+  std::cout << "ChatBot Copy Constructor" << std::endl;
 
-////
-//// EOF STUDENT CODE
+  *_chatLogic = *source._chatLogic;
+  *_rootNode = *source._rootNode;
+  *_image = *source._image;
+}
+
+ChatBot &ChatBot::operator=(const ChatBot &source) {
+  std::cout << "ChatBot Copy Assignment Operator" << std::endl;
+
+  if (this == &source) return *this;
+  if (_chatLogic != nullptr) delete _chatLogic;
+  *_chatLogic = *source._chatLogic;
+  if (_rootNode != nullptr) delete _rootNode;
+  *_rootNode = *source._rootNode;
+  if (_image != NULL) delete _image;
+  *_image = *source._image;
+  return *this;
+}
+
+ChatBot::ChatBot(ChatBot &&source) {
+  std::cout << "ChatBot Move Constructor" << std::endl;
+
+  _chatLogic = source._chatLogic;
+  source._chatLogic = nullptr;
+  _rootNode = source._rootNode;
+  source._rootNode = nullptr;
+  _image = source._image;
+  source._image = NULL;
+}
+
+ChatBot &ChatBot::operator=(ChatBot &&source) {
+  std::cout << "ChatBot Move Assignment Operator" << std::endl;
+
+  if (this == &source) return *this;
+
+  if (_chatLogic != nullptr) delete _chatLogic;
+  _chatLogic = source._chatLogic;
+  source._chatLogic = nullptr;
+  if (_rootNode != nullptr) delete _rootNode;
+  _rootNode = source._rootNode;
+  source._rootNode = nullptr;
+  if (_image != NULL) delete _image;
+  _image = source._image;
+  source._image = NULL;
+  return *this;
+}
 
 void ChatBot::ReceiveMessageFromUser(std::string message) {
   // loop over all edges and keywords and compute Levenshtein distance to query
