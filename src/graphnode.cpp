@@ -2,7 +2,7 @@
 
 #include "graphedge.h"
 
-GraphNode::GraphNode(int id) { _id = id; }
+GraphNode::GraphNode(int id) : _id(id) {}
 
 GraphNode::~GraphNode() {
   //// STUDENT CODE
