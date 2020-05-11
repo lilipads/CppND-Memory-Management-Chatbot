@@ -14,13 +14,7 @@ class ChatBotPanelDialog : public wxScrolledWindow {
   wxBoxSizer *_dialogSizer;
   wxBitmap _image;
 
-  //// STUDENT CODE
-  ////
-
   std::unique_ptr<ChatLogic> _chatLogic;
-
-  ////
-  //// EOF STUDENT CODE
 
  public:
   // constructor / destructor
