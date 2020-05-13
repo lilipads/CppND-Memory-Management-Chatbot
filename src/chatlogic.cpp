@@ -12,16 +12,9 @@
 #include "graphedge.h"
 #include "graphnode.h"
 
-ChatLogic::ChatLogic() {
-  // create instance of chatbot
-  _chatBot = new ChatBot("../images/chatbot.png");
+ChatLogic::ChatLogic() {}
 
-  // add pointer to chatlogic so that chatbot answers can be passed on to the
-  // GUI
-  _chatBot->SetChatLogicHandle(this);
-}
-
-ChatLogic::~ChatLogic() { delete _chatBot; }
+ChatLogic::~ChatLogic() {}
 
 template <typename T>
 void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens,
@@ -107,7 +100,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
 
             // create new element if ID does not yet exist
             if (newNode == _nodes.end()) {
-              _nodes.emplace_back(new GraphNode(id));
+              _nodes.emplace_back(std::make_unique<GraphNode>(id));
               newNode = _nodes.end() - 1;  // get iterator to last element
 
               // add all answers to current node
@@ -133,7 +126,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
               // get iterator on incoming and outgoing node via ID search
               auto parentNode = std::find_if(
                   _nodes.begin(), _nodes.end(),
-                  [&parentToken](const std ::unique_ptr<GraphNode> &node) {
+                  [&parentToken](const std::unique_ptr<GraphNode> &node) {
                     return node->GetID() == std::stoi(parentToken->second);
                   });
               auto childNode = std::find_if(
@@ -144,8 +137,8 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
 
               // create new edge
               auto edge = std::make_unique<GraphEdge>(id);
-              edge->SetChildNode((*childNode).get());
-              edge->SetParentNode((*parentNode).get());
+              edge->SetChildNode(childNode->get());
+              edge->SetParentNode(parentNode->get());
 
               // find all keywords for current node
               AddAllTokensToElement("KEYWORD", tokens, *(edge.get()));
@@ -183,9 +176,12 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
   }
 
   // add chatbot to graph root node
-  _chatBot->SetRootNode(rootNode);
-  ChatBot chatbot_instance = std::move(*_chatBot);
-  rootNode->MoveChatbotHere(std::move(chatbot_instance));
+  ChatBot chatBot("../images/chatbot.png");
+  chatBot.SetChatLogicHandle(this);
+  chatBot.SetRootNode(rootNode);
+  _chatBot = &chatBot;
+  // move constructor is called here
+  rootNode->MoveChatbotHere(std::move(chatBot));
 }
 
 void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *panelDialog) {
